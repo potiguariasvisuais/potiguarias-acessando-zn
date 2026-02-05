@@ -157,8 +157,16 @@
   const s1 = base ^ (idx * 2654435761);
   const s2 = (base + 1013904223) ^ (idx * 1597334677);
 
-  const x = 6 + seeded01(s1) * 88;
-  const y = 14 + seeded01(s2) * 72;
+  // viés para o centro
+const cx = 50;
+const cy = 55;
+
+const spreadX = 28;
+const spreadY = 26;
+
+const x = cx + (seeded01(s1) - 0.5) * spreadX * 2;
+const y = cy + (seeded01(s2) - 0.5) * spreadY * 2;
+
 
   el.style.left = x.toFixed(2) + "%";
   el.style.top = y.toFixed(2) + "%";
