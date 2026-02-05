@@ -59,7 +59,7 @@ body{
   padding: 10px 14px;
   border-radius: 999px;
 
-  width: fit-content;     /* chave: não estica */
+  width: 100px;     /* chave: não estica */
   max-width: max-content; /* chave: não estica */
 
   background: rgba(0,0,0,0.10);
