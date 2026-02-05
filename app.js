@@ -53,8 +53,8 @@ function supabaseReady(){
   const ok =
     typeof window.supabase !== "undefined" &&
     SUPABASE_URL && SUPABASE_ANON_KEY &&
-    !SUPABASE_URL.includes("COLE_AQUI") &&
-    !SUPABASE_ANON_KEY.includes("COLE_AQUI");
+    !SUPABASE_URL.includes("https://bjxcgnhjfqcpulmzlahp.supabase.co") &&
+    !SUPABASE_ANON_KEY.includes("sb_publishable_FmaJ0Zp4JIj1teRUPFwBCw_dqt1YpBo");
 
   if (!ok) return false;
 
