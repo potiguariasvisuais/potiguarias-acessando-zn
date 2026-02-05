@@ -322,13 +322,61 @@ input[type="file"]{
   border-color: rgba(20,20,40,0.65) transparent transparent transparent;
 }
 
-/* hover ativa a bolha */
-.seed:hover .bubble{
+/* ====== Bubble preview (hover funcional) ====== */
+
+.seed{
+  position: absolute;
+  cursor: pointer;
+}
+
+.seed .bubble{
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 16px);
+  transform: translateX(-50%) scale(0.75);
+
+  width: min(260px, 70vw);
+  max-height: 220px;
+
+  background: rgba(20,20,40,0.7);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(255,255,255,0.22);
+  border-radius: 18px;
+  padding: 12px;
+
+  box-shadow: 0 30px 90px rgba(0,0,0,0.45);
+
+  opacity: 0;
+  visibility: hidden;
+
+  transition:
+    opacity 0.3s ease,
+    transform 0.35s cubic-bezier(.22,1,.36,1);
+
+  z-index: 30;
+}
+
+/* seta */
+.seed .bubble::after{
+  content:"";
+  position:absolute;
+  top:100%;
+  left:50%;
+  transform: translateX(-50%);
+  border-width:10px 10px 0 10px;
+  border-style:solid;
+  border-color: rgba(20,20,40,0.7) transparent transparent transparent;
+}
+
+/* hover REAL */
+.seed:hover .bubble,
+.seed:focus-visible .bubble{
   opacity: 1;
+  visibility: visible;
   transform: translateX(-50%) scale(1);
 }
 
-/* imagem da bolha */
+/* imagem */
 .bubble img{
   width:100%;
   max-height:120px;
@@ -338,7 +386,7 @@ input[type="file"]{
   border:1px solid rgba(255,255,255,0.15);
 }
 
-/* texto da bolha */
+/* texto */
 .bubble .bubbleText{
   font-size: 13px;
   line-height: 1.45;
@@ -347,13 +395,46 @@ input[type="file"]{
   overflow: hidden;
 }
 
-/* dica de ação */
+/* hint */
 .bubble .bubbleHint{
   margin-top:6px;
   font-size:11px;
   color: rgba(255,255,255,0.6);
   text-align:right;
 }
+
+/* hover ativa a bolha 
+.seed:hover .bubble{
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* imagem da bolha 
+.bubble img{
+  width:100%;
+  max-height:120px;
+  object-fit:cover;
+  border-radius:12px;
+  margin-bottom:8px;
+  border:1px solid rgba(255,255,255,0.15);
+}
+
+/* texto da bolha 
+.bubble .bubbleText{
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(255,255,255,0.92);
+  max-height: 96px;
+  overflow: hidden;
+}
+
+/* dica de ação
+.bubble .bubbleHint{
+  margin-top:6px;
+  font-size:11px;
+  color: rgba(255,255,255,0.6);
+  text-align:right;
+} */
 
 /* TEXTO DA MENSAGEM (quase branco) */
 #viewerText{
@@ -362,6 +443,8 @@ input[type="file"]{
   line-height: 1.5;
   letter-spacing: 0.2px;
 }
+
+
 
 
 
