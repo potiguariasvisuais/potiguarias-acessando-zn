@@ -26,52 +26,56 @@ body{
 }
 }
 
+/* TOPBAR: logo esquerda / menu direita / clicável */
 .topbar{
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-
+  top: 0; left: 0; right: 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
-
-  padding: 14px 18px;
+  padding: 14px 16px;
   z-index: 50;
 
-  background: linear-gradient(
-    to bottom,
-    rgba(20,70,255,0.55),
-    rgba(20,70,255,0.25)
-  );
-
-  backdrop-filter: blur(10px);
-}
-
-  .logo{
-  max-width: 220px;
-  height: auto;
-    filter: drop-shadow(0 12px 30px rgba(0,0,0,0.25));
+  /* NÃO usar pointer-events:none aqui */
   pointer-events: auto;
 
+  /* sem barra gigante */
+  background: transparent;
 }
 
-  
+/* Logo */
+.logo{
+  width: min(280px, 55vw);
+  height: auto;
+  pointer-events: auto;
+}
+
+/* Menu no canto direito, com largura só do conteúdo */
 .nav{
-  display: flex;
+  display: inline-flex;
   gap: 14px;
+  align-items: center;
+
   padding: 10px 14px;
   border-radius: 999px;
+
+  width: fit-content;     /* chave: não estica */
+  max-width: max-content; /* chave: não estica */
+
   background: rgba(0,0,0,0.10);
-  border: 1px solid var(--stroke);
-  pointer-events:auto;
+  border: 1px solid rgba(255,255,255,0.18);
+
+  pointer-events: auto;
 }
+
 .nav a{
-  color: var(--muted);
-  text-decoration:none;
+  color: rgba(255,255,255,0.72);
+  text-decoration: none;
   font-weight: 650;
 }
-.nav a.active{ color: var(--txt); }
+
+.nav a.active{ color: rgba(255,255,255,0.92); }
+
 
 /*.stage{
   height:100%;
