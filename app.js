@@ -1,6 +1,6 @@
 // ====== CONFIG (cole suas chaves quando tiver) ======
-const SUPABASE_URL = "COLE_AQUI_SUA_SUPABASE_URL";
-const SUPABASE_ANON_KEY = "COLE_AQUI_SUA_ANON_PUBLIC_KEY";
+const SUPABASE_URL = "https://bjxcgnhjfqcpulmzlahp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_FmaJ0Zp4JIj1teRUPFwBCw_dqt1YpBo";
 
 // ====== UI REFS ======
 const garden = document.getElementById("garden");
