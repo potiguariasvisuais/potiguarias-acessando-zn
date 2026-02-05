@@ -1,6 +1,4 @@
 // ====== CONFIG (cole suas chaves quando tiver) ======
-const SUPABASE_URL = "https://bjxcgnhjfqcpulmzlahp.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_FmaJ0Zp4JIj1teRUPFwBCw_dqt1YpBo";
 
 // ====== UI REFS ======
 const garden = document.getElementById("garden");
@@ -50,19 +48,18 @@ closeViewer?.addEventListener("click", () => closeDialogSafe(viewer));
 // ====== Supabase (não deixa o site quebrar) ======
 let supabase = null;
 function supabaseReady(){
-  const ok =
-    typeof window.supabase !== "undefined" &&
-    SUPABASE_URL && SUPABASE_ANON_KEY &&
-    !SUPABASE_URL.includes("https://bjxcgnhjfqcpulmzlahp.supabase.co") &&
-    !SUPABASE_ANON_KEY.includes("sb_publishable_FmaJ0Zp4JIj1teRUPFwBCw_dqt1YpBo");
+  // checa se o script do supabase-js já carregou
+  if (typeof window.supabase === "undefined") return false;
 
-  if (!ok) return false;
+  // checa se tem cara de URL/KEY válidas
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
 
   if (!supabase) {
     supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
   return true;
 }
+
 
 const MAX_BYTES = 2 * 1024 * 1024; // 2MB
 
