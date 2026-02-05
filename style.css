@@ -150,6 +150,29 @@ body{
 .title{ margin:0; font-size: 20px; letter-spacing:0.2px; }
 .subtitle{ margin:0; color: var(--muted); line-height:1.35; }
 
+/* Destaque do textarea */
+textarea{
+  font-size: 16px;
+  line-height: 1.5;
+  padding: 14px;
+}
+
+/* Upload mais “discreto” */
+.uploadBlock{
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(255,255,255,0.22);
+  border-radius: 14px;
+  background: rgba(0,0,0,0.10);
+}
+
+.uploadHint{
+  margin: 8px 0 0;
+  font-size: 12px;
+  color: rgba(255,255,255,0.65);
+}
+
+
 .label{ font-size: 13px; color: var(--muted); }
 textarea{
   width:100%;
