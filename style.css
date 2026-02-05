@@ -28,11 +28,12 @@ body{
   pointer-events:none;
 }
 .logo{
-  width: min(280px, 55vw);
-  height:auto;
+  width: clamp(140px, 38vw, 280px);
+  height: auto;
   filter: drop-shadow(0 12px 30px rgba(0,0,0,0.25));
-  pointer-events:auto;
+  pointer-events: auto;
 }
+
 .nav{
   display:flex;
   gap: 14px;
@@ -354,4 +355,41 @@ input[type="file"]{
   color: rgba(255,255,255,0.6);
   text-align:right;
 }
+
+@media (max-width: 520px){
+  .logo{
+    width: clamp(110px, 22vw, 140px); /* ~50% menor no celular */
+  }
+}
+
+@media (max-width: 520px){
+  /* Header mais compacto */
+  .topbar{
+    padding: 10px 10px;
+  }
+
+  .nav{
+    gap: 10px;
+    padding: 8px 10px;
+  }
+
+  .nav a{
+    font-size: 14px;
+  }
+
+  /* Menos “espaço morto” no topo */
+  .stage{
+    padding-top: 64px; /* antes estava 82px */
+  }
+
+  /* Botão sempre visível (considera safe-area do iPhone) */
+  .fab{
+    right: 12px;
+    bottom: calc(12px + env(safe-area-inset-bottom));
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+
 
