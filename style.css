@@ -449,6 +449,28 @@ input[type="file"]{
 }
 
 
+/* FIX: logo esquerda, menu direita (extremidades) */
+.topbar{
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+}
+
+.nav{
+  margin-left: auto !important;   /* empurra pro lado direito */
+  position: relative !important;
+  right: 0 !important;
+}
+
+/* garante que nada esteja puxando o menu pra esquerda */
+.nav{
+  left: auto !important;
+  transform: none !important;
+}
+
+
+
 
 
 
