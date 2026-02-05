@@ -373,3 +373,20 @@ input[type="file"]{
   text-shadow: 0 2px 8px rgba(255,255,255,0.18);
 }
 
+/* Viewer — mensagem humana (clara) */
+.viewerText,
+#viewerText{
+  color: rgba(255,255,255,0.94);
+  text-shadow: 0 2px 8px rgba(255,255,255,0.18);
+}
+
+/* Viewer — metadado do sistema (azul profundo, quase preto) */
+.viewerMeta,
+#viewerMeta{
+  color: rgba(5, 10, 30, 0.75);
+  font-weight: 600;
+  letter-spacing: 0.2px;
+}
+
+
+
