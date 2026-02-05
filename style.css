@@ -354,3 +354,22 @@ input[type="file"]{
   color: rgba(255,255,255,0.6);
   text-align:right;
 }
+
+/* TEXTO DA MENSAGEM (quase branco) */
+#viewerText{
+  color: rgba(255,255,255,0.92);
+  font-size: 16px;
+  line-height: 1.5;
+  letter-spacing: 0.2px;
+}
+
+/* TEXTO DO SISTEMA (azul profundo, quase preto) */
+#viewerMeta{
+  color: rgba(10,20,60,0.85); /* azul noturno */
+  font-size: 13px;
+  margin-top: 8px;
+}
+#viewerText{
+  text-shadow: 0 2px 8px rgba(255,255,255,0.18);
+}
+
