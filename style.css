@@ -381,9 +381,14 @@ input[type="file"]{
 }
 
 /* Viewer — metadado do sistema (azul profundo, quase preto) */
+/* Viewer — metadado do sistema (preto 70%) */
 .viewerMeta,
 #viewerMeta{
-  color: rgba(0, 0, 0, 0); /* azul noite */
+  color: rgba(0, 0, 0, 0.7);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
 }
+
 
 
