@@ -15,6 +15,15 @@ body{
     var(--sky);
   color: var(--txt);
   overflow:hidden;
+  overscroll-behavior: none;
+}
+
+@media (max-width: 520px){
+  body{
+    overflow: hidden; /* mantém o jardim preso */
+    touch-action: manipulation; /* melhora toque */
+  }
+}
 }
 
 .topbar{
