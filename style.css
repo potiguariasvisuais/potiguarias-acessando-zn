@@ -365,7 +365,7 @@ input[type="file"]{
 
 /* TEXTO DO SISTEMA (azul profundo, quase preto) */
 #viewerMeta{
-  color: rgba(10,20,60,0.85); /* azul noturno */
+  color: rgba(60,20,60,0.55); /* azul noturno */
   font-size: 13px;
   margin-top: 8px;
 }
