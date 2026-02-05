@@ -363,32 +363,24 @@ input[type="file"]{
   letter-spacing: 0.2px;
 }
 
-/* TEXTO DO SISTEMA (azul profundo, quase preto) */
-#viewerMeta{
-  color: rgba(60,20,60,0.55); /* azul noturno */
-  font-size: 13px;
-  margin-top: 8px;
-}
-#viewerText{
-  text-shadow: 0 2px 8px rgba(255,255,255,0.18);
-}
+
 
 /* Viewer — mensagem humana (clara) */
-.viewerText,
-#viewerText{
+.viewerText{
   color: rgba(255,255,255,0.94);
   text-shadow: 0 2px 8px rgba(255,255,255,0.18);
 }
 
 /* Viewer — metadado do sistema (azul profundo, quase preto) */
 /* Viewer — metadado do sistema (preto 70%) */
-.viewerMeta,
-#viewerMeta{
-  color: rgba(0, 0, 0, 0.7);
+/* Viewer — metadado do sistema (cinza claro discreto) */
+.viewerMeta{
+  color: rgba(220, 225, 235, 0.65);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.2px;
 }
+
 
 
 
