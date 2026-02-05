@@ -435,6 +435,16 @@ input[type="file"]{
   }
 }
 
+@media (max-width: 520px){
+  .fab{
+    right: 12px;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    padding: 10px 14px;
+    font-size: 14px;
+  }
+}
+
+
 
 
 
