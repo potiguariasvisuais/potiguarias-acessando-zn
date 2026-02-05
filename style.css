@@ -37,7 +37,7 @@ body{
   pointer-events:none;
 }
 .logo{
-  width: clamp(140px, 38vw, 280px);
+  width: clamp(140px, 38px, 280px);
   height: auto;
   filter: drop-shadow(0 12px 30px rgba(0,0,0,0.25));
   pointer-events: auto;
