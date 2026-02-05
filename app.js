@@ -147,10 +147,10 @@
   }
 
   function createSeedEl(post, idx, openFn) {
-  const el = document.createElement("button");
+  const el = document.createElement("div");
   el.className = "seed";
-  el.type = "button";
-  el.setAttribute("aria-label", "Abrir postagem do mural");
+  el.setAttribute("role", "button");
+  el.setAttribute("tabindex", "0");
 
   // posição orgânica
   const base = hashString(post.id);
@@ -163,7 +163,7 @@
   el.style.left = x.toFixed(2) + "%";
   el.style.top = y.toFixed(2) + "%";
 
-  // ícone da seed
+  // ===== ÍCONE DA SEED =====
   const mediaType = post.media_type || "";
   const isImage = mediaType.startsWith("image/");
 
@@ -180,7 +180,7 @@
     el.appendChild(span);
   }
 
-  /* ====== Bubble ====== */
+  // ===== BUBBLE (PREVIEW) =====
   const bubble = document.createElement("div");
   bubble.className = "bubble";
 
@@ -192,12 +192,12 @@
     bubble.appendChild(img);
   }
 
-  // texto no preview (prioritário)
+  // texto no preview (prioridade)
   if (post.text) {
-    const p = document.createElement("div");
-    p.className = "bubbleText";
-    p.textContent = post.text;
-    bubble.appendChild(p);
+    const textDiv = document.createElement("div");
+    textDiv.className = "bubbleText";
+    textDiv.textContent = post.text;
+    bubble.appendChild(textDiv);
   }
 
   // hint
@@ -206,13 +206,15 @@
   hint.textContent = "clique para expandir";
   bubble.appendChild(hint);
 
+  // ⚠️ ISSO É O PONTO-CHAVE
   el.appendChild(bubble);
 
-  // clique continua abrindo o modal completo
+  // clique abre modal completo
   el.addEventListener("click", openFn);
 
   return el;
 }
+
 
 
   async function renderGarden(garden, viewerEls) {
