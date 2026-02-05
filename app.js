@@ -147,83 +147,45 @@
   }
 
   function createSeedEl(post, idx, openFn) {
-  const el = document.createElement("div");
-  el.className = "seed";
-  el.setAttribute("role", "button");
-  el.setAttribute("tabindex", "0");
+    const el = document.createElement("button");
+    el.className = "seed";
+    el.type = "button";
+    el.setAttribute("aria-label", "Abrir postagem do mural");
 
-  // posição orgânica
-  const base = hashString(post.id);
-  const s1 = base ^ (idx * 2654435761);
-  const s2 = (base + 1013904223) ^ (idx * 1597334677);
+    const base = hashString(post.id);
+    const s1 = base ^ (idx * 2654435761);
+    const s2 = (base + 1013904223) ^ (idx * 1597334677);
 
-  // viés para o centro
-const cx = 50;
-const cy = 55;
+    const x = 6 + seeded01(s1) * 88;
+    const y = 12 + seeded01(s2) * 76;
 
-const spreadX = 28;
-const spreadY = 26;
+    el.style.left = x.toFixed(2) + "%";
+    el.style.top = y.toFixed(2) + "%";
 
-const x = cx + (seeded01(s1) - 0.5) * spreadX * 2;
-const y = cy + (seeded01(s2) - 0.5) * spreadY * 2;
+    const phaseSeed = (base ^ 0x9e3779b9) >>> 0;
+    const dur = 4.8 + seeded01(phaseSeed) * 4.5;
+    el.style.animationDuration = dur.toFixed(2) + "s";
+    el.style.animationDelay = (-seeded01(phaseSeed ^ 12345) * dur).toFixed(2) + "s";
 
+    const mediaType = post.media_type || "";
+    const isImage = mediaType.startsWith("image/");
 
-  el.style.left = x.toFixed(2) + "%";
-  el.style.top = y.toFixed(2) + "%";
+    if (post.image_url && isImage) {
+      const img = document.createElement("img");
+      img.className = "seedThumb";
+      img.src = post.image_url;
+      img.alt = "";
+      el.appendChild(img);
+    } else {
+      const span = document.createElement("span");
+      span.className = "emoji";
+      span.textContent = pickGlyph(post.id);
+      el.appendChild(span);
+    }
 
-  // ===== ÍCONE DA SEED =====
-  const mediaType = post.media_type || "";
-  const isImage = mediaType.startsWith("image/");
-
-  if (post.image_url && isImage) {
-    const img = document.createElement("img");
-    img.className = "seedThumb";
-    img.src = post.image_url;
-    img.alt = "";
-    el.appendChild(img);
-  } else {
-    const span = document.createElement("span");
-    span.className = "emoji";
-    span.textContent = pickGlyph(post.id);
-    el.appendChild(span);
+    el.addEventListener("click", openFn);
+    return el;
   }
-
-  // ===== BUBBLE (PREVIEW) =====
-  const bubble = document.createElement("div");
-  bubble.className = "bubble";
-
-  // imagem no preview (se houver)
-  if (post.image_url && isImage) {
-    const img = document.createElement("img");
-    img.src = post.image_url;
-    img.alt = "";
-    bubble.appendChild(img);
-  }
-
-  // texto no preview (prioridade)
-  if (post.text) {
-    const textDiv = document.createElement("div");
-    textDiv.className = "bubbleText";
-    textDiv.textContent = post.text;
-    bubble.appendChild(textDiv);
-  }
-
-  // hint
-  const hint = document.createElement("div");
-  hint.className = "bubbleHint";
-  hint.textContent = "clique para expandir";
-  bubble.appendChild(hint);
-
-  // ⚠️ ISSO É O PONTO-CHAVE
-  el.appendChild(bubble);
-
-  // clique abre modal completo
-  el.addEventListener("click", openFn);
-
-  return el;
-}
-
-
 
   async function renderGarden(garden, viewerEls) {
     if (!garden) return;
