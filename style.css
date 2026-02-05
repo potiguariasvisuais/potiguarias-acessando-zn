@@ -383,7 +383,7 @@ input[type="file"]{
 /* Viewer — metadado do sistema (azul profundo, quase preto) */
 .viewerMeta,
 #viewerMeta{
-  color: rgba(0, 0, 0, 1); /* azul noite */
+  color: rgba(0, 0, 0, 0); /* azul noite */
 }
 
 
