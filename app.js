@@ -1,144 +1,143 @@
-// ====== CONFIG (cole suas chaves quando tiver) ======
+// Potiguarias Visuais — Acessando a ZN
+// app.js (corrigido e completo)
 
-// ====== UI REFS ======
-const garden = document.getElementById("garden");
+// ====== CONFIG ======
+const SUPABASE_URL = "https://bjxcgnhjfqcpulmzlahp.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_FmaJ0Zp4JIj1teRUPFwBCw_dqt1YpBo";
 
-const composer = document.getElementById("composer");
-const openComposer = document.getElementById("openComposer");
-const closeComposer = document.getElementById("closeComposer");
+// ====== LIMITES ======
+const MAX_BYTES = 2 * 1024 * 1024; // 2MB
 
-const form = document.getElementById("muralForm");
-const textEl = document.getElementById("text");
-const mediaEl = document.getElementById("media");
-const statusEl = document.getElementById("status");
-const sendBtn = document.getElementById("sendBtn");
+// ====== Supabase (UMA ÚNICA declaração) ======
+let supabaseClient = null; // <-- NÃO crie outra variável chamada "supabase"
 
-const viewer = document.getElementById("viewer");
-const closeViewer = document.getElementById("closeViewer");
-const viewerImg = document.getElementById("viewerImg");
-const viewerText = document.getElementById("viewerText");
-const viewerMeta = document.getElementById("viewerMeta");
-
-// ====== Helpers ======
-function setStatus(msg) { statusEl.textContent = msg || ""; }
-
-function closeDialogSafe(dlg){
-  try { dlg.close(); } catch {}
-}
-
-// Fecha clicando fora do card
-composer?.addEventListener("click", (e) => {
-  const formEl = composer.querySelector("form");
-  if (!formEl) return;
-  const r = formEl.getBoundingClientRect();
-  const inside = (e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom);
-  if (!inside) closeDialogSafe(composer);
-});
-
-// ====== Botão “Deixar minha marca” (fix robusto) ======
-openComposer?.addEventListener("click", () => {
-  // dialog.showModal() existe no Chrome moderno
-  if (composer?.showModal) composer.showModal();
-  else composer?.setAttribute("open", ""); // fallback
-});
-
-closeComposer?.addEventListener("click", () => closeDialogSafe(composer));
-closeViewer?.addEventListener("click", () => closeDialogSafe(viewer));
-
-// ====== Supabase (não deixa o site quebrar) ======
-let supabase = null;
-function supabaseReady(){
-  // checa se o script do supabase-js já carregou
+// Inicializa o Supabase apenas quando a lib estiver carregada
+function supabaseReady() {
   if (typeof window.supabase === "undefined") return false;
-
-  // checa se tem cara de URL/KEY válidas
   if (!SUPABASE_URL || !SUPABASE_ANON_KEY) return false;
 
-  if (!supabase) {
-    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  if (!supabaseClient) {
+    supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
   }
   return true;
 }
 
+// ====== UI REFS (após DOM pronto) ======
+let garden, composer, openComposer, closeComposer;
+let form, textEl, mediaEl, statusEl, sendBtn;
+let viewer, closeViewer, viewerImg, viewerText, viewerMeta;
 
-const MAX_BYTES = 2 * 1024 * 1024; // 2MB
+// ====== Helpers ======
+function setStatus(msg) {
+  if (!statusEl) return;
+  statusEl.textContent = msg || "";
+}
 
-function validateFile(file){
+function closeDialogSafe(dlg) {
+  try { dlg.close(); } catch {}
+}
+
+function validateFile(file) {
   if (!file) return null;
   if (file.size > MAX_BYTES) return "Arquivo acima de 2MB. Envie um arquivo menor.";
   return null;
 }
 
-function formatDate(iso){
+function formatDate(iso) {
   try {
     const d = new Date(iso);
-    return d.toLocaleString("pt-BR", { dateStyle:"short", timeStyle:"short" });
-  } catch { return ""; }
+    return d.toLocaleString("pt-BR", { dateStyle: "short", timeStyle: "short" });
+  } catch {
+    return "";
+  }
 }
 
-// ====== Upload multimídia ======
-async function uploadMediaIfAny(file){
+// ====== Upload multimídia (imagem/vídeo/áudio) ======
+async function uploadMediaIfAny(file) {
   if (!file) return null;
 
-  // Guarda em Storage "mural"
+  // Bucket: "mural"
   const ext = (file.name.split(".").pop() || "bin").toLowerCase();
   const path = `${crypto.randomUUID()}.${ext}`;
 
-  const { error: upErr } = await supabase
+  const { error: upErr } = await supabaseClient
     .storage
     .from("mural")
     .upload(path, file, { contentType: file.type, upsert: false });
 
   if (upErr) throw upErr;
 
-  const { data } = supabase.storage.from("mural").getPublicUrl(path);
+  const { data } = supabaseClient.storage.from("mural").getPublicUrl(path);
   return data?.publicUrl || null;
 }
 
-async function insertPost(text, mediaUrl, mediaType){
-  const { error } = await supabase
+async function insertPost(text, mediaUrl, mediaType) {
+  // tabela: mural_posts
+  // colunas: text, image_url, media_type
+  const { error } = await supabaseClient
     .from("mural_posts")
-    .insert([{ text: text || null, image_url: mediaUrl, media_type: mediaType || null }]);
+    .insert([{
+      text: text || null,
+      image_url: mediaUrl || null,
+      media_type: mediaType || null
+    }]);
 
   if (error) throw error;
 }
 
-// ====== Render “jardim” (se você já tinha, mantém o seu; aqui deixo simples) ======
-function hashString(str){
+// ====== Render “jardim” (ícones flutuantes) ======
+function hashString(str) {
   let h = 2166136261;
-  for (let i=0;i<str.length;i++){
+  for (let i = 0; i < str.length; i++) {
     h ^= str.charCodeAt(i);
     h = Math.imul(h, 16777619);
   }
   return h >>> 0;
 }
-function seeded01(seed){
+
+function seeded01(seed) {
   let x = seed || 123456789;
   x ^= x << 13; x >>>= 0;
   x ^= x >> 17; x >>>= 0;
   x ^= x << 5;  x >>>= 0;
   return (x >>> 0) / 4294967296;
 }
-function pickEmoji(id){
-  const options = ["✶","✦","✺","✹","❋","✷","☼","☾","⟡","✧","✩","✪"];
+
+function pickEmoji(id) {
+  const options = ["✶", "✦", "✺", "✹", "❋", "✷", "☼", "☾", "⟡", "✧", "✩", "✪"];
   return options[hashString(id) % options.length];
 }
 
-function openViewer(post){
-  // Para mídia: se for imagem, mostra no <img>. Se não for, mostra link no texto.
-  const isImage = (post.media_type || "").startsWith("image/");
-  if (post.image_url && isImage){
+function clearGarden() {
+  if (garden) garden.innerHTML = "";
+}
+
+function openViewer(post) {
+  const mediaType = post.media_type || "";
+  const isImage = mediaType.startsWith("image/");
+  const isVideo = mediaType.startsWith("video/");
+  const isAudio = mediaType.startsWith("audio/");
+
+  // Reset
+  viewerImg.style.display = "none";
+  viewerImg.removeAttribute("src");
+  viewerImg.alt = "";
+
+  // Se quiser vídeo/áudio embutido, dá pra expandir aqui.
+  // Por enquanto:
+  // - imagem: mostra no <img>
+  // - vídeo/áudio: mostra link dentro do texto
+  if (post.image_url && isImage) {
     viewerImg.src = post.image_url;
     viewerImg.style.display = "block";
     viewerImg.alt = "Imagem enviada ao mural";
-  } else {
-    viewerImg.removeAttribute("src");
-    viewerImg.style.display = "none";
-    viewerImg.alt = "";
   }
 
   let t = post.text || "";
-  if (post.image_url && !isImage){
+  if (post.image_url && (isVideo || isAudio)) {
+    t += (t ? "\n\n" : "") + `Arquivo: ${post.image_url}`;
+  } else if (post.image_url && !isImage) {
+    // fallback para qualquer outro tipo
     t += (t ? "\n\n" : "") + `Arquivo: ${post.image_url}`;
   }
 
@@ -147,12 +146,11 @@ function openViewer(post){
   viewer.showModal();
 }
 
-function clearGarden(){ if (garden) garden.innerHTML = ""; }
-
-function createSeedEl(post, idx){
+function createSeedEl(post, idx) {
   const el = document.createElement("button");
   el.className = "seed";
   el.type = "button";
+  el.setAttribute("aria-label", "Abrir postagem do mural");
 
   const base = hashString(post.id);
   const s1 = base ^ (idx * 2654435761);
@@ -163,10 +161,17 @@ function createSeedEl(post, idx){
   el.style.left = x.toFixed(2) + "%";
   el.style.top = y.toFixed(2) + "%";
 
-  const hasMedia = !!post.image_url;
-  const isImage = (post.media_type || "").startsWith("image/");
+  // variação do movimento
+  const phaseSeed = (base ^ 0x9e3779b9) >>> 0;
+  const dur = 4.8 + seeded01(phaseSeed) * 4.5;
+  el.style.animationDuration = dur.toFixed(2) + "s";
+  el.style.animationDelay = (-seeded01(phaseSeed ^ 12345) * dur).toFixed(2) + "s";
 
-  if (hasMedia && isImage){
+  const hasMedia = !!post.image_url;
+  const mediaType = post.media_type || "";
+  const isImage = mediaType.startsWith("image/");
+
+  if (hasMedia && isImage) {
     const img = document.createElement("img");
     img.className = "seedThumb";
     img.src = post.image_url;
@@ -183,8 +188,8 @@ function createSeedEl(post, idx){
   return el;
 }
 
-async function fetchPosts(){
-  const { data, error } = await supabase
+async function fetchPosts() {
+  const { data, error } = await supabaseClient
     .from("mural_posts")
     .select("id, created_at, text, image_url, media_type")
     .order("created_at", { ascending: false })
@@ -194,61 +199,104 @@ async function fetchPosts(){
   return data || [];
 }
 
-async function renderGarden(){
+async function renderGarden() {
   if (!garden) return;
-  if (!supabaseReady()) return; // sem supabase, não renderiza posts
-  clearGarden();
+  if (!supabaseReady()) return;
 
+  clearGarden();
   const posts = (await fetchPosts()).reverse();
   posts.forEach((p, idx) => garden.appendChild(createSeedEl(p, idx)));
 }
 
-// ====== Submit ======
-form?.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// ====== START (após DOM pronto) ======
+window.addEventListener("DOMContentLoaded", () => {
+  // Refs
+  garden = document.getElementById("garden");
 
-  const text = (textEl.value || "").trim();
-  const file = mediaEl.files?.[0] || null;
+  composer = document.getElementById("composer");
+  openComposer = document.getElementById("openComposer");
+  closeComposer = document.getElementById("closeComposer");
 
-  const fileError = validateFile(file);
-  if (fileError){
-    setStatus(fileError);
-    return;
-  }
-  if (!text && !file){
-    setStatus("Escreva um texto e/ou envie uma mídia ✨");
-    return;
-  }
+  form = document.getElementById("muralForm");
+  textEl = document.getElementById("text");
+  mediaEl = document.getElementById("media");
+  statusEl = document.getElementById("status");
+  sendBtn = document.getElementById("sendBtn");
 
-  // Mesmo que supabase não esteja pronto, o modal funciona.
-  if (!supabaseReady()){
-    setStatus("Falta configurar o Supabase (URL e anon key) no app.js.");
-    return;
-  }
+  viewer = document.getElementById("viewer");
+  closeViewer = document.getElementById("closeViewer");
+  viewerImg = document.getElementById("viewerImg");
+  viewerText = document.getElementById("viewerText");
+  viewerMeta = document.getElementById("viewerMeta");
 
-  try {
-    sendBtn.disabled = true;
-    setStatus("Enviando…");
+  // ====== Modal abrir/fechar ======
+  openComposer?.addEventListener("click", () => {
+    // garantido mesmo se supabase ainda não estiver ok
+    if (composer?.showModal) composer.showModal();
+    else composer?.setAttribute("open", "");
+  });
 
-    const mediaUrl = await uploadMediaIfAny(file);
-    const mediaType = file?.type || null;
+  closeComposer?.addEventListener("click", () => closeDialogSafe(composer));
+  closeViewer?.addEventListener("click", () => closeDialogSafe(viewer));
 
-    // ⚠️ precisa adicionar a coluna media_type (abaixo explico)
-    await insertPost(text, mediaUrl, mediaType);
+  // Fecha clicando fora do card
+  composer?.addEventListener("click", (e) => {
+    const formEl = composer.querySelector("form");
+    if (!formEl) return;
+    const r = formEl.getBoundingClientRect();
+    const inside = (
+      e.clientX >= r.left && e.clientX <= r.right &&
+      e.clientY >= r.top && e.clientY <= r.bottom
+    );
+    if (!inside) closeDialogSafe(composer);
+  });
 
-    textEl.value = "";
-    mediaEl.value = "";
-    setStatus("Recebido ✶ Sua marca já está no céu.");
+  // ====== Submit ======
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    await renderGarden();
-    setTimeout(() => closeDialogSafe(composer), 450);
-  } catch (err) {
-    console.error(err);
-    setStatus("Não consegui enviar agora. Tente novamente.");
-  } finally {
-    sendBtn.disabled = false;
-  }
+    const text = (textEl?.value || "").trim();
+    const file = mediaEl?.files?.[0] || null;
+
+    const fileError = validateFile(file);
+    if (fileError) {
+      setStatus(fileError);
+      return;
+    }
+
+    if (!text && !file) {
+      setStatus("Escreva um texto e/ou envie uma mídia ✨");
+      return;
+    }
+
+    if (!supabaseReady()) {
+      setStatus("Supabase não carregou (confira os <script> e as chaves).");
+      return;
+    }
+
+    try {
+      sendBtn.disabled = true;
+      setStatus("Enviando…");
+
+      const mediaUrl = await uploadMediaIfAny(file);
+      const mediaType = file?.type || null;
+
+      await insertPost(text, mediaUrl, mediaType);
+
+      if (textEl) textEl.value = "";
+      if (mediaEl) mediaEl.value = "";
+      setStatus("Recebido ✶ Sua marca já está no céu.");
+
+      await renderGarden();
+      setTimeout(() => closeDialogSafe(composer), 450);
+    } catch (err) {
+      console.error(err);
+      setStatus("Não consegui enviar agora. Tente novamente.");
+    } finally {
+      sendBtn.disabled = false;
+    }
+  });
+
+  // Render inicial
+  renderGarden();
 });
-
-// Start
-renderGarden();
