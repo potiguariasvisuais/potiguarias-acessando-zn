@@ -27,24 +27,38 @@ body{
 }
 
 .topbar{
-  position:fixed;
-  top:0; left:0; right:0;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding: 14px 16px;
-  z-index: 10;
-  pointer-events:none;
-}
-.logo{
-  width: clamp(100px, 38vw, 140px);
-  height: auto;
-  filter: drop-shadow(0 12px 30px rgba(0,0,0,0.25));
-  pointer-events: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 14px 18px;
+  z-index: 50;
+
+  background: linear-gradient(
+    to bottom,
+    rgba(20,70,255,0.55),
+    rgba(20,70,255,0.25)
+  );
+
+  backdrop-filter: blur(10px);
 }
 
+  .logo{
+  max-width: 220px;
+  height: auto;
+    filter: drop-shadow(0 12px 30px rgba(0,0,0,0.25));
+  pointer-events: auto;
+
+}
+
+  
 .nav{
-  display:flex;
+  display: flex;
   gap: 14px;
   padding: 10px 14px;
   border-radius: 999px;
