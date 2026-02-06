@@ -147,65 +147,78 @@
   }
 
   function createSeedEl(post, idx, openFn) {
-    const el = document.createElement("button");
-    el.className = "seed";
-    el.type = "button";
-    el.setAttribute("aria-label", "Abrir postagem do mural");
+  const el = document.createElement("button");
+  el.className = "seed";
+  el.type = "button";
+  el.setAttribute("aria-label", "Abrir postagem do mural");
 
-    const base = hashString(post.id);
-    const s1 = base ^ (idx * 2654435761);
-    const s2 = (base + 1013904223) ^ (idx * 1597334677);
+  const base = hashString(post.id);
+  const s1 = base ^ (idx * 2654435761);
+  const s2 = (base + 1013904223) ^ (idx * 1597334677);
 
-    const x = 6 + seeded01(s1) * 88;
-    const y = 12 + seeded01(s2) * 76;
+  const x = 6 + seeded01(s1) * 88;
+  const y = 12 + seeded01(s2) * 76;
 
-    el.style.left = x.toFixed(2) + "%";
-    el.style.top = y.toFixed(2) + "%";
+  el.style.left = x.toFixed(2) + "%";
+  el.style.top = y.toFixed(2) + "%";
 
-    const phaseSeed = (base ^ 0x9e3779b9) >>> 0;
-    const dur = 4.8 + seeded01(phaseSeed) * 4.5;
-    el.style.animationDuration = dur.toFixed(2) + "s";
-    el.style.animationDelay = (-seeded01(phaseSeed ^ 12345) * dur).toFixed(2) + "s";
+  const phaseSeed = (base ^ 0x9e3779b9) >>> 0;
+  const dur = 4.8 + seeded01(phaseSeed) * 4.5;
+  el.style.animationDuration = dur.toFixed(2) + "s";
+  el.style.animationDelay =
+    (-seeded01(phaseSeed ^ 12345) * dur).toFixed(2) + "s";
 
-    const mediaType = post.media_type || "";
-    const isImage = mediaType.startsWith("image/");
+  const mediaType = post.media_type || "";
+  const isImage = mediaType.startsWith("image/");
 
-    if (post.image_url && isImage) {
-      const img = document.createElement("img");
-      img.className = "seedThumb";
-      img.src = post.image_url;
-      img.alt = "";
-      el.appendChild(img);
-    } else {
-      const span = document.createElement("span");
-      span.className = "emoji";
-      span.textContent = pickGlyph(post.id);
-      el.appendChild(span);
-    }
-
-    el.addEventListener("click", openFn);
-    return el;
+  // ===== conteúdo visível da seed =====
+  if (post.image_url && isImage) {
+    const img = document.createElement("img");
+    img.className = "seedThumb";
+    img.src = post.image_url;
+    img.alt = "";
+    el.appendChild(img);
+  } else {
+    const span = document.createElement("span");
+    span.className = "emoji";
+    span.textContent = pickGlyph(post.id);
+    el.appendChild(span);
   }
 
-  async function renderGarden(garden, viewerEls) {
-    if (!garden) return;
-    if (!supabaseReady()) return;
+  // ===== BUBBLE (HOVER PREVIEW) =====
+  const bubble = document.createElement("div");
+  bubble.className = "bubble";
 
-    clearGarden(garden);
-
-    const posts = (await fetchPosts()).reverse();
-
-    posts.forEach((p, idx) => {
-      const openFn = () => openViewer(
-        viewerEls.viewer,
-        viewerEls.viewerImg,
-        viewerEls.viewerText,
-        viewerEls.viewerMeta,
-        p
-      );
-      garden.appendChild(createSeedEl(p, idx, openFn));
-    });
+  // imagem na bolha (se existir)
+  if (post.image_url && isImage) {
+    const bImg = document.createElement("img");
+    bImg.src = post.image_url;
+    bImg.alt = "";
+    bubble.appendChild(bImg);
   }
+
+  // texto da bolha
+  if (post.text) {
+    const bText = document.createElement("div");
+    bText.className = "bubbleText";
+    bText.textContent = post.text;
+    bubble.appendChild(bText);
+  }
+
+  // hint
+  const hint = document.createElement("div");
+  hint.className = "bubbleHint";
+  hint.textContent = "clique para abrir";
+  bubble.appendChild(hint);
+
+  el.appendChild(bubble);
+
+  // clique abre viewer completo
+  el.addEventListener("click", openFn);
+
+  return el;
+}
+
 
   // ====== START ======
   window.addEventListener("DOMContentLoaded", () => {
