@@ -219,6 +219,31 @@
   return el;
 }
 
+  async function renderGarden(garden, viewerEls) {
+  if (!garden) return;
+  if (!supabaseReady()) return;
+
+  try {
+    const posts = await fetchPosts();
+    const ordered = (posts || []).reverse();
+
+    garden.innerHTML = "";
+
+    ordered.forEach((p, idx) => {
+      const openFn = () => openViewer(
+        viewerEls.viewer,
+        viewerEls.viewerImg,
+        viewerEls.viewerText,
+        viewerEls.viewerMeta,
+        p
+      );
+      garden.appendChild(createSeedEl(p, idx, openFn));
+    });
+  } catch (err) {
+    console.error("renderGarden falhou:", err);
+  }
+}
+
 
   // ====== START ======
   window.addEventListener("DOMContentLoaded", () => {
